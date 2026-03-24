@@ -1,0 +1,422 @@
+<!-- ============================================================
+     AI SANDBOX 1 — Assessment Generator (Updated)
+     For use in Canvas — upload to GitHub Pages, then embed
+     via iFrame in your Canvas assignment.
+
+     EMBED CODE (paste into Canvas HTML Editor):
+     <iframe src="YOUR-GITHUB-PAGES-URL"
+             width="100%"
+             height="820px"
+             style="border:none;">
+     </iframe>
+     ============================================================ -->
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .sb1-wrap {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #F4EFE6;
+    border-radius: 10px;
+    padding: 4px;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .sb1-header {
+    background: #1A2E4A;
+    border-radius: 8px 8px 0 0;
+    padding: 16px 22px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .sb1-dots { display: flex; gap: 6px; }
+  .sb1-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  .sb1-header-text h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0 0 2px;
+  }
+
+  .sb1-header-text p {
+    font-size: 12px;
+    color: rgba(255,255,255,0.55);
+    margin: 0;
+  }
+
+  .sb1-body {
+    background: #ffffff;
+    border-radius: 0 0 8px 8px;
+    padding: 26px;
+    border: 2px solid #1A2E4A;
+    border-top: none;
+  }
+
+  .sb1-privacy {
+    background: #EEF4FB;
+    border: 1px solid #C5D9EE;
+    border-radius: 7px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #1A4A80;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    line-height: 1.5;
+  }
+
+  .sb1-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .sb1-field { margin-bottom: 16px; }
+
+  .sb1-field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1A2E4A;
+    margin-bottom: 4px;
+  }
+
+  .sb1-hint {
+    font-size: 12px;
+    color: #6A6A7A;
+    margin-bottom: 5px;
+  }
+
+  .sb1-field select,
+  .sb1-field input[type="text"],
+  .sb1-field textarea {
+    width: 100%;
+    border: 1.5px solid #DDD6C8;
+    border-radius: 7px;
+    padding: 9px 13px;
+    font-size: 14px;
+    color: #1A2E4A;
+    background: #FAF7F2;
+    font-family: inherit;
+    resize: vertical;
+  }
+
+  .sb1-field select:focus,
+  .sb1-field input:focus,
+  .sb1-field textarea:focus {
+    outline: none;
+    border-color: #2A7060;
+    background: #fff;
+  }
+
+  .sb1-btn-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+
+  .sb1-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 22px;
+    border: none;
+    border-radius: 7px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s;
+  }
+
+  .sb1-btn-primary { background: #2A7060; color: white; }
+  .sb1-btn-primary:hover { background: #1F5C4D; }
+  .sb1-btn-primary:disabled { background: #A0B8B4; cursor: not-allowed; }
+
+  .sb1-btn-copy {
+    background: #FAF7F2;
+    color: #1A2E4A;
+    border: 1.5px solid #DDD6C8;
+    display: none;
+  }
+  .sb1-btn-copy.show { display: inline-flex; }
+  .sb1-btn-copy:hover { background: #F0EBF9; border-color: #5A3E8A; color: #5A3E8A; }
+
+  .sb1-btn-download {
+    background: #FAF7F2;
+    color: #1A2E4A;
+    border: 1.5px solid #DDD6C8;
+    display: none;
+  }
+  .sb1-btn-download.show { display: inline-flex; }
+  .sb1-btn-download:hover { background: #E8F4F1; border-color: #2A7060; color: #2A7060; }
+
+  .sb1-output { display: none; margin-top: 22px; }
+  .sb1-output.show { display: block; }
+
+  .sb1-output-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #6A6A7A;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .sb1-output-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #DDD6C8;
+  }
+
+  .sb1-result-box {
+    background: #FAF7F2;
+    border: 1px solid #DDD6C8;
+    border-radius: 7px;
+    padding: 18px;
+    font-size: 14px;
+    line-height: 1.75;
+    color: #1A2E4A;
+    white-space: pre-wrap;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+
+  .sb1-loading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #6A6A7A;
+    font-size: 14px;
+    padding: 16px 0;
+  }
+
+  .sb1-spinner {
+    width: 18px; height: 18px;
+    border: 2px solid #DDD6C8;
+    border-top-color: #2A7060;
+    border-radius: 50%;
+    animation: sb1spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes sb1spin { to { transform: rotate(360deg); } }
+
+  .sb1-copy-confirm {
+    font-size: 12px;
+    color: #2A7060;
+    font-weight: 500;
+    display: none;
+    align-items: center;
+    gap: 5px;
+  }
+  .sb1-copy-confirm.show { display: inline-flex; }
+
+  @media (max-width: 600px) {
+    .sb1-row { grid-template-columns: 1fr; }
+    .sb1-btn-row { flex-direction: column; }
+  }
+</style>
+
+<div class="sb1-wrap">
+  <div class="sb1-header">
+    <div class="sb1-dots">
+      <div class="sb1-dot" style="background:#FF5F57;"></div>
+      <div class="sb1-dot" style="background:#FEBC2E;"></div>
+      <div class="sb1-dot" style="background:#28C840;"></div>
+    </div>
+    <div class="sb1-header-text">
+      <h3>🧪 AI Sandbox 1 — Assessment Generator</h3>
+      <p>Practice generating a standards-aligned assessment using AI. Then critically evaluate the output.</p>
+    </div>
+  </div>
+
+  <div class="sb1-body">
+
+    <div class="sb1-privacy">
+      🔒 <span><strong>Privacy reminder:</strong> Never enter real student names or personally identifiable information into any AI tool. Use fictional scenarios and hypothetical contexts only.</span>
+    </div>
+
+    <div class="sb1-row">
+      <div class="sb1-field">
+        <label for="sb1-grade">Grade Level</label>
+        <select id="sb1-grade">
+          <option value="">Select grade level...</option>
+          <option>Kindergarten</option>
+          <option>1st Grade</option>
+          <option>2nd Grade</option>
+          <option>3rd Grade</option>
+          <option>4th Grade</option>
+          <option>5th Grade</option>
+          <option>6th Grade</option>
+          <option>7th Grade</option>
+          <option>8th Grade</option>
+          <option>9th Grade</option>
+          <option>10th Grade</option>
+          <option>11th Grade</option>
+          <option>12th Grade</option>
+        </select>
+      </div>
+      <div class="sb1-field">
+        <label for="sb1-subject">Subject Area</label>
+        <input type="text" id="sb1-subject" placeholder="e.g., 7th Grade Life Science">
+      </div>
+    </div>
+
+    <div class="sb1-field">
+      <label for="sb1-standard">Learning Standard or Objective</label>
+      <div class="sb1-hint">Be specific! Paste the exact standard code and description if possible.</div>
+      <input type="text" id="sb1-standard" placeholder="e.g., MS-LS2-1: Analyze and interpret data to provide evidence for effects of resource availability...">
+    </div>
+
+    <div class="sb1-row">
+      <div class="sb1-field">
+        <label for="sb1-type">Assessment Type</label>
+        <select id="sb1-type">
+          <option value="">Select type...</option>
+          <option>Formative (exit ticket, check for understanding)</option>
+          <option>Summative unit test</option>
+          <option>Performance task</option>
+          <option>Portfolio prompt</option>
+          <option>Short answer quiz</option>
+          <option>Multiple choice quiz</option>
+          <option>Mixed format assessment</option>
+        </select>
+      </div>
+      <div class="sb1-field">
+        <label for="sb1-dok">DOK Level Target</label>
+        <select id="sb1-dok">
+          <option value="">Select DOK level...</option>
+          <option>DOK 1 — Recall &amp; Reproduction</option>
+          <option>DOK 2 — Skills &amp; Concepts</option>
+          <option>DOK 3 — Strategic Thinking</option>
+          <option>DOK 4 — Extended Thinking</option>
+          <option>Mixed DOK levels (1–3)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="sb1-field">
+      <label for="sb1-constraints">Special Considerations</label>
+      <div class="sb1-hint">Any exclusions, cultural contexts to include/avoid, accommodations to model, or specific constraints?</div>
+      <textarea id="sb1-constraints" rows="2" placeholder="e.g., Avoid sports-themed contexts. Include one visual (describe it). Students have been studying Chapter 4 in Miller &amp; Levine..."></textarea>
+    </div>
+
+    <div class="sb1-btn-row">
+      <button class="sb1-btn sb1-btn-primary" id="sb1-btn" onclick="sb1Generate()">
+        Generate Assessment ✦
+      </button>
+      <button class="sb1-btn sb1-btn-copy" id="sb1-copy-btn" onclick="sb1Copy()">
+        📋 Copy Assessment
+      </button>
+      <button class="sb1-btn sb1-btn-download" id="sb1-dl-btn" onclick="sb1Download()">
+        ⬇ Download as .txt
+      </button>
+      <span class="sb1-copy-confirm" id="sb1-copy-confirm">✓ Copied to clipboard!</span>
+    </div>
+
+    <div class="sb1-output" id="sb1-output">
+      <div class="sb1-output-label">AI-Generated Assessment</div>
+      <div class="sb1-result-box" id="sb1-result"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  async function sb1Generate() {
+    const grade       = document.getElementById('sb1-grade').value;
+    const subject     = document.getElementById('sb1-subject').value.trim();
+    const standard    = document.getElementById('sb1-standard').value.trim();
+    const type        = document.getElementById('sb1-type').value;
+    const dok         = document.getElementById('sb1-dok').value;
+    const constraints = document.getElementById('sb1-constraints').value.trim();
+
+    if (!grade || !subject || !standard || !type) {
+      alert('Please fill in Grade Level, Subject Area, Learning Standard, and Assessment Type before generating.');
+      return;
+    }
+
+    const btn    = document.getElementById('sb1-btn');
+    const output = document.getElementById('sb1-output');
+    const result = document.getElementById('sb1-result');
+
+    btn.disabled = true;
+    output.className = 'sb1-output show';
+    result.innerHTML = '<div class="sb1-loading"><div class="sb1-spinner"></div> Generating your assessment...</div>';
+    document.getElementById('sb1-copy-btn').className     = 'sb1-btn sb1-btn-copy';
+    document.getElementById('sb1-dl-btn').className       = 'sb1-btn sb1-btn-download';
+    document.getElementById('sb1-copy-confirm').className = 'sb1-copy-confirm';
+
+    const prompt = `Create a ${type} for a ${grade} ${subject} class.
+
+Learning Standard: ${standard}
+DOK Level Target: ${dok || 'Appropriate mix for grade level'}
+${constraints ? `Special Considerations: ${constraints}` : ''}
+
+Requirements:
+- Include 4-6 assessment items appropriate to the grade level and standard
+- Target the specified DOK level(s)
+- Include clear student-facing instructions
+- Include an answer key or scoring guide
+- Format it as a ready-to-use classroom assessment
+
+This is for an educator training exercise. Generate a high-quality, realistic assessment that a teacher could review and use as a strong starting point.`;
+
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          system: 'You are an experienced K-12 curriculum designer and assessment specialist. Generate high-quality, standards-aligned assessment content. Be specific, clear, and pedagogically sound. Format responses cleanly with clear headings.',
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+
+      if (!response.ok) throw new Error(`API error: ${response.status}`);
+      const data = await response.json();
+      const text = data.content[0].text;
+      result.textContent = text;
+
+      document.getElementById('sb1-copy-btn').className = 'sb1-btn sb1-btn-copy show';
+      document.getElementById('sb1-dl-btn').className   = 'sb1-btn sb1-btn-download show';
+
+    } catch (err) {
+      result.textContent = 'Error generating assessment: ' + err.message + '\n\nPlease check your connection and try again.';
+    }
+
+    btn.disabled = false;
+  }
+
+  function sb1Copy() {
+    const text = document.getElementById('sb1-result').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const confirm = document.getElementById('sb1-copy-confirm');
+      confirm.className = 'sb1-copy-confirm show';
+      setTimeout(() => confirm.className = 'sb1-copy-confirm', 2500);
+    });
+  }
+
+  function sb1Download() {
+    const text = document.getElementById('sb1-result').textContent;
+    const blob = new Blob([text], { type: 'text/plain' });
+    const a    = document.createElement('a');
+    a.href     = URL.createObjectURL(blob);
+    a.download = 'AI_Assessment_Sandbox1.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+</script>
